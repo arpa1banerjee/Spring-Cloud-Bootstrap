@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.demo.dto.Department;
 
-@FeignClient(name = "department-service")
+@FeignClient(name = "department-service", fallback = DepartmentServiceFallback.class)
 public interface DepartmentServiceFeign {
 
 	@GetMapping("/api/v1/getDepartmentByEmpId/{empId}")
