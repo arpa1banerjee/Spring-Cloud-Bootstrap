@@ -21,61 +21,61 @@ import com.example.demo.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
-	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
-	
+
 	@Autowired
 	EmployeeRepository employeeRepository;
-	
+
 	@Autowired
 	SalaryServiceFeign salaryServiceProxy;
-	
+
 	@Autowired
 	DepartmentServiceFeign departmentServiceFeign;
-	
+
 	@Autowired
 	Mapper mapper;
 
 	public EmployeeDTO getEmployeeDetail(long empId) {
 		EmployeeDTO employeeDTO = new EmployeeDTO();
 		Optional<Employee> employee = employeeRepository.findById(empId);
-		if(employee.isPresent()) {
+		if (employee.isPresent()) {
 			employeeDTO = mapper.map(employee.get(), EmployeeDTO.class);
-			
+
 			Salary salary = getSalaryDetail(empId);
 			employeeDTO.setSalary(salary.getSal());
-			
+
 			Department department = getDepartmentDetail(empId);
 			employeeDTO.setDept_name(department.getDepartmentName());
 		}
 		return employeeDTO;
 	}
-	
+
 	private Department getDepartmentDetail(long empId) {
 		return departmentServiceFeign.getDeptByEmpId(empId);
 	}
 
 	private Salary getSalaryDetail(long empId) {
 		List<Salary> salary = salaryServiceProxy.getSalary(empId);
-		if(log.isDebugEnabled()) {
-			salary.forEach(sal -> log.debug("Salary fetched from salary microservice, {}", sal));
+		if (!salary.isEmpty()) {
+			if (log.isDebugEnabled()) {
+				salary.forEach(sal -> log.debug("Salary fetched from salary microservice, {}", sal));
+			}
+			Long currenTimeinMillis = System.currentTimeMillis();
+			return salary.stream().filter(sal -> (currenTimeinMillis > sal.getFromDate().getSeconds()
+					&& currenTimeinMillis < sal.getToDate().getTime())).collect(toSingleItem());
+		} else {
+			return new Salary();
 		}
-		Long currenTimeinMillis = System.currentTimeMillis();
-		return salary.stream()
-			.filter(sal -> (currenTimeinMillis > sal.getFromDate().getSeconds() && currenTimeinMillis < sal.getToDate().getTime()))
-			.collect(toSingleItem());
 	}
-	
+
 	private static <T> Collector<T, ?, T> toSingleItem() {
-	    return Collectors.collectingAndThen(
-	            Collectors.toList(),
-	            list -> {
-	                if (list.size() != 1) {
-	                    throw new IllegalStateException();
-	                }
-	                return list.get(0);
-	            }
-	    );
+		return Collectors.collectingAndThen(Collectors.toList(), list -> {
+			if (list.size() != 1) {
+				throw new IllegalStateException();
+			}
+			return list.get(0);
+		});
 	}
 
 }
