@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+  <mapping> 
+    <class-a>com.example.demo.dao.Employee</class-a>
+    <class-b>com.example.demo.dto.EmployeeDTO</class-b>   
+    <field>
+      <a>firstName</a>
+      <b>first_name</b>
+    </field>
+    <field>
+      <a>lastName</a>
+      <b>last_name</b>
+    </field>
+    <field>
+      <a>hireDate</a>
+      <b>hire_date</b>
+    </field>
+  </mapping>  
+
+</mappings> 
