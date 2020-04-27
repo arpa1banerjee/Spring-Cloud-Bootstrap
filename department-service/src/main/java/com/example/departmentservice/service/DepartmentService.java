@@ -32,8 +32,7 @@ public class DepartmentService {
 	}
 	
 	public Department getDepartmentById(String depNumber) throws DeptNotFoundException {
-		Optional<Department> optDepartment = departmentRepository.findById(depNumber);
-		return optDepartment.map(obj -> optDepartment.get())
+		return departmentRepository.findById(depNumber)
 				.orElseThrow(() -> new DeptNotFoundException("Department record not found for depNumber: " + depNumber));
 	}
 	
