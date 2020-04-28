@@ -23,7 +23,8 @@ public class PreFilter extends ZuulFilter {
 		RequestContext ctx = RequestContext.getCurrentContext();
 	    HttpServletRequest request = ctx.getRequest();
 	    if(log.isInfoEnabled()) {
-	    	log.info("Request Method : {}  Request URL : {}", request.getMethod(), request.getRequestURL().toString());
+	    	log.info("In pre filter");
+	    	log.info("Request Method : {}  Request URL : {}", request.getMethod(), request.getRequestURL());
 	    }
 	    return null;
 	}
